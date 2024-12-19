@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'DonationMsysteM.urls'
@@ -72,6 +73,12 @@ WSGI_APPLICATION = 'DonationMsysteM.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL', 'postgres://user:password@localhost/dbname')
+    )
+}
 
 DATABASES = {
     'default': {
@@ -119,10 +126,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-# STATIC_URLS = BASE_DIR/ 'static'
-STATICFILES_DIRS=os.path.join(BASE_DIR,"static"),
-STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles_build","static")
+# STATIC_URL = 'static/'
+# # STATIC_URLS = BASE_DIR/ 'static'
+# STATICFILES_DIRS=os.path.join(BASE_DIR,"static"),
+# STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles_build","static")
 
 
 
@@ -133,3 +140,22 @@ MEDIA_ROOT = os.path.join(BASE_DIR ,"media")
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+import os
+import dj_database_url
+from pathlib import Path
+
+# Set Django settings for production
+BASE_DIR = Path(__file__).resolve().parent.parent
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-z^(%lm__l=h*$&*tbvn=fm2ro^oj$axj^!9%1!h80fp1tv9jlc')  # Use an environment variable for the secret key
+DEBUG = False
+ALLOWED_HOSTS = ['.vercel.app', 'localhost']
+
+
+# Static files settings
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
